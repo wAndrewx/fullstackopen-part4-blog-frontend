@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import auth from "./services/auth";
@@ -14,13 +14,25 @@ const App = () => {
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
 
+  const createRef = useRef();
+
   useEffect(() => {
     let isLocal = window.localStorage.getItem("token");
+    const getBlog = async () => {
+      const getBlog = await blogService.getAll();
+      setBlogs(getBlog);
+    };
+    getBlog();
     if (isLocal) {
       setUsername(JSON.parse(isLocal).username);
     }
-    blogService.getAll().then((blogs) => setBlogs(blogs));
   }, []);
+
+  // useEffect(() => {
+  //   isLoggedIn();
+
+  //   return () => {};
+  // }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -78,6 +90,7 @@ const App = () => {
         <div>
           <h2>blogs</h2>
           <CreateBlog
+            ref={createRef}
             handleTitle={(e) => {
               setTitle(e);
             }}
@@ -89,11 +102,20 @@ const App = () => {
             }}
             handleCreation={handleCreation}
           />
+          <button
+            onClick={() => {
+              createRef.current.toggleVisibility();
+            }}
+          >
+            View
+          </button>
           <h3>{username + " is logged in"}</h3>
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
-          <button onClick={handleLogout}>logout</button>
+          <button id="visibility" onClick={handleLogout}>
+            Logout
+          </button>
         </div>
       );
     }

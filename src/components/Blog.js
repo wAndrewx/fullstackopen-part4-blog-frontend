@@ -7,12 +7,18 @@ const Blog = ({ blog }) => {
 
   const toggleInfo = () => {
     setInfo(!info);
-    console.log(likes);
+    // console.log(likes);
   };
 
   const handleLike = async () => {
-    const res = await axios.put(`/api/blogs${blog.id}`, { likes: likes + 1 });
-    setLikes(likes + 1);
+    try {
+      const res = await axios.put(`/api/blogs/${blog.id}`, {
+        likes: likes + 1,
+      });
+      setLikes(likes + 1);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const MoreInfoJSX = () => {
@@ -21,11 +27,11 @@ const Blog = ({ blog }) => {
         <div>
           <div>
             {blog.title} by {blog.author}
-            <button onClick={toggleInfo}> More </button>)
+            <button onClick={toggleInfo}> Less </button>
           </div>
           <div>{blog.url}</div>
           <div>
-            {blog.likes}
+            {likes}
             <button onClick={handleLike}>Like</button>
           </div>
         </div>
