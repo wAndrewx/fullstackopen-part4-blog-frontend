@@ -3,7 +3,7 @@ const baseUrl = "/api/blogs";
 
 const getAll = async () => {
   const res = await axios.get(baseUrl);
-  console.log(res);
+  // console.log(res);
   return res.data;
 };
 

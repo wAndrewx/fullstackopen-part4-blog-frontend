@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
-
-const Blog = ({ blog }) => {
+import PropTypes from "prop-types";
+const Blog = ({ blog, token }) => {
   const [info, setInfo] = useState(false);
   const [likes, setLikes] = useState(blog.likes);
 
@@ -21,6 +21,19 @@ const Blog = ({ blog }) => {
     }
   };
 
+  const handleDelete = async () => {
+    const config = {
+      headers: { Authorization: token.token },
+    };
+
+    try {
+      const res = await axios.delete(`/api/blogs/${blog.id}`, config);
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const MoreInfoJSX = () => {
     if (info) {
       return (
@@ -31,9 +44,10 @@ const Blog = ({ blog }) => {
           </div>
           <div>{blog.url}</div>
           <div>
-            {likes}
+            Likes: {likes}
             <button onClick={handleLike}>Like</button>
           </div>
+          <button onClick={handleDelete}>Delete</button>
         </div>
       );
     } else {
@@ -58,5 +72,12 @@ const Blog = ({ blog }) => {
 
   return <div style={blogStyle}>{MoreInfoJSX()}</div>;
 };
-
+Blog.propTypes = {
+  info: PropTypes.bool,
+  likes: PropTypes.number,
+  toggleInfo: PropTypes.func,
+  handleDelete: PropTypes.func,
+  handleLike: PropTypes.func,
+  MoreInfoJSX: PropTypes.func,
+};
 export default Blog;

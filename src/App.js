@@ -17,22 +17,16 @@ const App = () => {
   const createRef = useRef();
 
   useEffect(() => {
-    let isLocal = window.localStorage.getItem("token");
+    let isLocal = window.localStorage.getItem("token"); // on load set token
     const getBlog = async () => {
       const getBlog = await blogService.getAll();
       setBlogs(getBlog);
-    };
+    }; //getBlog
     getBlog();
     if (isLocal) {
       setUsername(JSON.parse(isLocal).username);
     }
-  }, []);
-
-  // useEffect(() => {
-  //   isLoggedIn();
-
-  //   return () => {};
-  // }, []);
+  }, [blogs, setBlogs]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -50,7 +44,7 @@ const App = () => {
   const handleCreation = async (e) => {
     e.preventDefault();
     const getToken = JSON.parse(window.localStorage.getItem("token"));
-    console.log(getToken);
+    // console.log(getToken);
     if (!title || !author || !url) {
       console.log("Missing values");
       return;
@@ -64,6 +58,9 @@ const App = () => {
     try {
       const res = await blogService.createBlog(getToken, blogObj);
       console.log(res);
+      setTitle("");
+      setUrl("");
+      setAuthor("");
     } catch (error) {
       console.log(error);
     }
@@ -110,9 +107,20 @@ const App = () => {
             View
           </button>
           <h3>{username + " is logged in"}</h3>
-          {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
-          ))}
+          {blogs
+            .sort((a, b) => {
+              {
+                /* console.log(a.likes) */
+              }
+              return a.likes < b.likes;
+            })
+            .map((blog) => (
+              <Blog
+                token={JSON.parse(window.localStorage.getItem("token"))}
+                key={blog.id}
+                blog={blog}
+              />
+            ))}
           <button id="visibility" onClick={handleLogout}>
             Logout
           </button>
